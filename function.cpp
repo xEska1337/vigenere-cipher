@@ -2,26 +2,44 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
 
 #include "function.h"
 
 std::string readFile(const std::string &pathToFile)
 {
     std::string fileContent;
-    std::ifstream inp(pathToFile);
-    if (inp)
+    if (std::filesystem::exists(pathToFile))
     {
-        while (not inp.eof())
+        if (std::filesystem::is_empty(pathToFile))
         {
-            std::string temp;
-            inp >> temp;
-            fileContent.append(temp);
+            std::cout << pathToFile << " jest pusty, wprowadz poprawna wartosc" << std::endl;
+            exit(0);
+        }
+        else
+        {
+            std::ifstream inp(pathToFile);
+            if (inp)
+            {
+                while (not inp.eof())
+                {
+                    std::string temp;
+                    inp >> temp;
+
+                    fileContent.append(temp);
+                }
+            }
+
+            std::transform(fileContent.begin(), fileContent.end(), fileContent.begin(), ::toupper);
+
+            return fileContent;
         }
     }
-
-    std::transform(fileContent.begin(), fileContent.end(), fileContent.begin(), ::toupper);
-
-    return fileContent;
+    else
+    {
+        std::cout << pathToFile << " plik nie istnieje" << std::endl;
+        exit(0);
+    }
 }
 
 void writeToFile(const std::string &pathToFile, const std::string &fileContent)
@@ -66,16 +84,25 @@ void cryptonator(const std::string &inpFile, const std::string &outFile, const s
     int index = 0;
     for (int i = 0; i < message.length(); i++)
     {
-        if (encrypt)
+        auto m = find(alphabet.begin(), alphabet.end(), message[i]);
+        auto k = find(alphabet.begin(), alphabet.end(), key[i]);
+
+        if (m != alphabet.end() && k != alphabet.end())
         {
-            index = (alphabet.find(message[i]) + alphabet.find(key[i])) % alphabet.length();
+            if (encrypt)
+            {
+                index = (distance(alphabet.begin(), m) + distance(alphabet.begin(), k)) % alphabet.length();
+            }
+            else
+            {
+                index = (distance(alphabet.begin(), m) - distance(alphabet.begin(), k) + alphabet.length()) % alphabet.length();
+            }
+            processedMessage.push_back(alphabet[index]);
         }
         else
         {
-            index = (alphabet.find(message[i]) - alphabet.find(key[i]) + 26) % alphabet.length();
+            processedMessage.push_back(message[i]);
         }
-
-        processedMessage.push_back(alphabet[index]);
     }
 
     writeToFile(outFile, processedMessage);
