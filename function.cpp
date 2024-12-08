@@ -3,6 +3,7 @@
 #include <fstream>
 #include <algorithm>
 #include <filesystem>
+#include <locale.h>
 
 #include "function.h"
 
@@ -30,8 +31,9 @@ std::string readFile(const std::string &pathToFile)
                 }
             }
 
-            std::transform(fileContent.begin(), fileContent.end(), fileContent.begin(), ::toupper);
-
+            //std::transform(fileContent.begin(), fileContent.end(), fileContent.begin(), ::toupper);
+            toUpperCase(fileContent);
+            
             return fileContent;
         }
     }
@@ -51,7 +53,7 @@ void writeToFile(const std::string &pathToFile, const std::string &fileContent)
     }
 }
 
-void adjustKey(std::string &key, const std::string &message)
+void adjustKey(std::wstring &key, const std::string &message)
 {
     for (int i = key.length(), j = 0; i <= message.length(); i++, j++)
     {
@@ -71,15 +73,30 @@ void adjustKey(std::string &key, const std::string &message)
     }
 }
 
+void toUpperCase(std::string & inp)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> wsconverter;
+    std::locale::global(std::locale(""));
+
+    std::wstring toConvet = wsconverter.from_bytes(inp);
+
+    std::transform(toConvet.begin(), toConvet.end(), toConvet.begin(), ::towupper);
+
+    inp = wsconverter.to_bytes(toConvet);
+}
+
 void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt)
 {
-    std::string message = readFile(inpFile),
-                key = readFile(keyFile),
-                processedMessage;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> wsconverter;
 
-    const std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::wstring message = wsconverter.from_bytes(readFile(inpFile)), 
+    key = wsconverter.from_bytes(readFile(keyFile)),
+    processedMessage ;
 
-    adjustKey(key, message);
+    //const std::wstring alphabet = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const std::wstring alphabet = L"AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ";
+
+    adjustKey(key, wsconverter.to_bytes(message));
 
     int index = 0;
     for (int i = 0; i < message.length(); i++)
@@ -105,5 +122,5 @@ void cryptonator(const std::string &inpFile, const std::string &outFile, const s
         }
     }
 
-    writeToFile(outFile, processedMessage);
+    writeToFile(outFile, wsconverter.to_bytes(processedMessage));
 }

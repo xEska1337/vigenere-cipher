@@ -26,7 +26,14 @@ void writeToFile(const std::string &pathToFile, const std::string &fileContent);
  * @param key zawartość pliku klucza
  * @param message zawartość pliku wejściowego
  */
-void adjustKey(std::string &key, const std::string &message);
+void adjustKey(std::wstring &key, const std::string &message);
+
+/**
+ * @brief funcja zamieniająca na wielkie linery z uwzględnieniem znaków unicode
+ * 
+ * @param inp text do zamiany
+ */
+void toUpperCase(std::string & inp);
 
 /**
  * @brief funkcja szyfrująca/deszyfrująca
