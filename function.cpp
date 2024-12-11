@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <locale.h>
+#include <unordered_map>
 
 #include "function.h"
 
@@ -31,9 +32,10 @@ std::string readFile(const std::string &pathToFile)
                 }
             }
 
-            //std::transform(fileContent.begin(), fileContent.end(), fileContent.begin(), ::toupper);
+            // std::transform(fileContent.begin(), fileContent.end(), fileContent.begin(), ::toupper);
             toUpperCase(fileContent);
-            
+            // characterReplacer(fileContent);
+
             return fileContent;
         }
     }
@@ -73,30 +75,54 @@ void adjustKey(std::wstring &key, const std::string &message)
     }
 }
 
-void toUpperCase(std::string & inp)
+void toUpperCase(std::string &inp)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> wsconverter;
     std::locale::global(std::locale(""));
 
-    std::wstring toConvet = wsconverter.from_bytes(inp);
+    std::wstring toConvet = toWStringConverter(inp);
 
     std::transform(toConvet.begin(), toConvet.end(), toConvet.begin(), ::towupper);
 
-    inp = wsconverter.to_bytes(toConvet);
+    inp = fromWStringConverter(toConvet);
+}
+
+std::wstring toWStringConverter(const std::string &inp)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> wsconverter;
+    return wsconverter.from_bytes(inp);
+}
+
+std::string fromWStringConverter(const std::wstring &inp)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> wsconverter;
+    return wsconverter.to_bytes(inp);
+}
+
+void characterReplacer(std::string &inp)
+{
+    std::wstring winp = toWStringConverter(inp);
+    std::unordered_map<wchar_t, char> characterToReplace = {{L'ą', 'a'}, {L'Ą', 'A'}, {L'ć', 'c'}, {L'Ć', 'C'}, {L'ę', 'e'}, {L'Ę', 'E'}, {L'ł', 'l'}, {L'Ł', 'L'}, {L'ń', 'n'}, {L'Ń', 'N'}, {L'ó', 'o'}, {L'Ó', 'O'}, {L'ś', 's'}, {L'Ś', 'S'}, {L'ż', 'z'}, {L'Ż', 'Z'}, {L'ź', 'z'}, {L'Ź', 'Z'}};
+    for (int i = 0; i < winp.size(); i++)
+    {
+        auto finder = characterToReplace.find(winp[i]);
+        if (finder != characterToReplace.end())
+        {
+            winp[i] = finder->second;
+        }
+    }
+    inp = fromWStringConverter(winp);
 }
 
 void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> wsconverter;
+    std::wstring message = toWStringConverter(readFile(inpFile)),
+                 key = toWStringConverter(readFile(keyFile)),
+                 processedMessage;
 
-    std::wstring message = wsconverter.from_bytes(readFile(inpFile)), 
-    key = wsconverter.from_bytes(readFile(keyFile)),
-    processedMessage ;
-
-    //const std::wstring alphabet = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // const std::wstring alphabet = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const std::wstring alphabet = L"AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ";
 
-    adjustKey(key, wsconverter.to_bytes(message));
+    adjustKey(key, fromWStringConverter(message));
 
     int index = 0;
     for (int i = 0; i < message.length(); i++)
@@ -122,5 +148,5 @@ void cryptonator(const std::string &inpFile, const std::string &outFile, const s
         }
     }
 
-    writeToFile(outFile, wsconverter.to_bytes(processedMessage));
+    writeToFile(outFile, fromWStringConverter(processedMessage));
 }

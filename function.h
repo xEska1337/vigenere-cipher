@@ -30,14 +30,38 @@ void adjustKey(std::wstring &key, const std::string &message);
 
 /**
  * @brief funcja zamieniająca na wielkie linery z uwzględnieniem znaków unicode
- * 
+ *
  * @param inp text do zamiany
  */
-void toUpperCase(std::string & inp);
+void toUpperCase(std::string &inp);
+
+/**
+ * @brief funkcja zamieniajaca stringa na wstringa
+ *
+ * @param inp zmienna do zamiany
+ * @return std::wstring
+ */
+std::wstring toWStringConverter(const std::string &inp);
+
+/**
+ * @brief funkcja zamienijaca wstringa na stringa
+ *
+ * @param inp zmienna do zamiany
+ * @return std::string
+ */
+std::string fromWStringConverter(const std::wstring &inp);
+
+/**
+ * @brief funkcja zamieniajaca polskie znaki na ich odpowiedniki bez ogonków
+ *
+ * @param inp text do zamiany
+ * @note funkcja do użycia jeżeli nie chcemy polskich znaków w zaszyfrowanym tekscie
+ */
+void characterReplacer(std::string &inp);
 
 /**
  * @brief funkcja szyfrująca/deszyfrująca
- * 
+ *
  * @param inpFile ścieżka do pliku wejściowego
  * @param outFile ścieżka do pliku wyjściowego
  * @param keyFile ścieżka do pliku klucza
