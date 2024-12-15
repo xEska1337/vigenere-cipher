@@ -6,6 +6,7 @@
 #define FUNCTION_H
 
 #include <string>
+#include <unordered_map>
 
 /**
  * @brief funkcja odczytująca zawartość pliku i zamienia na wielkie litery
@@ -68,4 +69,59 @@ void characterReplacer(std::string &inp);
  * @param encrypt wybór między szyfrowaniem a odszyfrowaniem
  */
 void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt);
+
+/**
+ * @brief funkcja obliczająca częstotliwość występowania litter w zaszyfrowanym tekście
+ *
+ * @param inp text do obliczenia
+ * @return std::unordered_map<wchar_t, double> tabela częstotliwości
+ */
+std::unordered_map<wchar_t, double> calcFrequency(const std::wstring &inp);
+
+/**
+ * @brief funkcja obliczająca długość tekstu bez znaków specjalnych
+ *
+ * @param inp text do obliczenia
+ * @return int długość tekstu
+ */
+int messageLength(const std::wstring &inp);
+
+/**
+ * @brief funkcja porównująca tabele częstotliwości ze sobą
+ *
+ * @param inp tabela do porównania
+ * @return double różnica miedzy tabelami
+ */
+double chiSquared(const std::unordered_map<wchar_t, double> &inp, const int &textLength);
+
+/**
+ * @brief funkcja obliczająca Index of Coincidence
+ * 
+ * @param inp text do obliczenia
+ * @return double 
+ */
+double calcIC(const std::wstring &inp);
+
+/**
+ * @brief funkcja usuwa wszystkie znaki które nie są literami
+ * 
+ * @param inp text do korekcji
+ */
+void deleteSpecialCharacters(std::wstring & inp);
+
+/**
+ * @brief funkcja obliczająca długość klucza
+ *
+ * @param inp text do obliczenia
+ * @return int długość klucza
+ */
+int findKeyLength(std::wstring &inp);
+
+/**
+ * @brief funkcja próbująca złamać szyfr
+ *
+ * @param inpFile ścieżka do pliku wejściowego
+ * @param outFile ścieżka do pliku wyjściowego
+ */
+void cracker(const std::string &inpFile, const std::string &outFile);
 #endif
