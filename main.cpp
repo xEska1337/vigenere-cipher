@@ -1,11 +1,12 @@
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 #include "function.h"
 
 int main(int argc, char **argv)
 {
-    bool encrypt = false, crack = false;
+    bool encrypt = false, crack = false, polskie = false;
     std::string inpFile, outFile, keyFile;
     if (argc <= 1)
     {
@@ -13,6 +14,7 @@ int main(int argc, char **argv)
                   << "--en szyfrowanie" << std::endl
                   << "--de odszyfrowanie" << std::endl
                   << "--br łamanie szyfru" << std::endl
+                  << "--pl załączenie obsługi polskich znaków" << std::endl
                   << "-i plik tekstowy wejściowy" << std::endl
                   << "-o plik tekstowy wyjściowy" << std::endl
                   << "-k plik tekstowy z kluczem" << std::endl;
@@ -26,6 +28,10 @@ int main(int argc, char **argv)
         else if (std::string(argv[i]) == "--br")
         {
             crack = true;
+        }
+        else if (std::string(argv[i]) == "--pl")
+        {
+            polskie = true;
         }
         else if (std::string(argv[i]) == "-i")
         {
@@ -41,7 +47,18 @@ int main(int argc, char **argv)
         }
     }
 
-    cryptonator(inpFile,outFile,keyFile,encrypt);
+    /*
+    if (crack)
+    {
+        cracker(inpFile,outFile,polskie);
+    }
+    else
+    {
+        cryptonator(inpFile,outFile,keyFile,encrypt,polskie);
+    }
+    */
+
+    cryptonator(inpFile,outFile,keyFile,encrypt,polskie);
 
     return 0;
 }

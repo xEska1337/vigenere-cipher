@@ -32,10 +32,7 @@ std::string readFile(const std::string &pathToFile)
                     fileContent.append(temp);
                 }
             }
-
-            // std::transform(fileContent.begin(), fileContent.end(), fileContent.begin(), ::toupper);
             toUpperCase(fileContent);
-            // characterReplacer(fileContent);
 
             return fileContent;
         }
@@ -99,31 +96,38 @@ std::string fromWStringConverter(const std::wstring &inp)
     return wsconverter.to_bytes(inp);
 }
 
-void characterReplacer(std::string &inp)
+void characterReplacer(std::wstring &inp)
 {
-    std::wstring winp = toWStringConverter(inp);
     std::unordered_map<wchar_t, char> characterToReplace = {{L'ą', 'a'}, {L'Ą', 'A'}, {L'ć', 'c'}, {L'Ć', 'C'}, {L'ę', 'e'}, {L'Ę', 'E'}, {L'ł', 'l'}, {L'Ł', 'L'}, {L'ń', 'n'}, {L'Ń', 'N'}, {L'ó', 'o'}, {L'Ó', 'O'}, {L'ś', 's'}, {L'Ś', 'S'}, {L'ż', 'z'}, {L'Ż', 'Z'}, {L'ź', 'z'}, {L'Ź', 'Z'}};
-    for (int i = 0; i < winp.size(); i++)
+    for (int i = 0; i < inp.size(); i++)
     {
-        auto finder = characterToReplace.find(winp[i]);
+        auto finder = characterToReplace.find(inp[i]);
         if (finder != characterToReplace.end())
         {
-            winp[i] = finder->second;
+            inp[i] = finder->second;
         }
     }
-    inp = fromWStringConverter(winp);
 }
 
-void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt)
+void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt, const bool &polskie)
 {
     std::wstring message = toWStringConverter(readFile(inpFile)),
                  key = toWStringConverter(readFile(keyFile)),
-                 processedMessage;
+                 processedMessage,
+                 alphabet;
 
-    // const std::wstring alphabet = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const std::wstring alphabet = L"AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ";
+    if (polskie)
+    {
+        alphabet = L"AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ";
+    }
+    else
+    {
+        alphabet = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        characterReplacer(message);
+    }
 
     deleteSpecialCharacters(message);
+    deleteSpecialCharacters(key);
     adjustKey(key, fromWStringConverter(message));
 
     int index = 0;

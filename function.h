@@ -58,7 +58,7 @@ std::string fromWStringConverter(const std::wstring &inp);
  * @param inp text do zamiany
  * @note funkcja do użycia jeżeli nie chcemy polskich znaków w zaszyfrowanym tekscie
  */
-void characterReplacer(std::string &inp);
+void characterReplacer(std::wstring &inp);
 
 /**
  * @brief funkcja szyfrująca/deszyfrująca
@@ -67,8 +67,9 @@ void characterReplacer(std::string &inp);
  * @param outFile ścieżka do pliku wyjściowego
  * @param keyFile ścieżka do pliku klucza
  * @param encrypt wybór między szyfrowaniem a odszyfrowaniem
+ * @param polskie czy maja zostac polskie znaki czy nie
  */
-void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt);
+void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt, const bool &polskie);
 
 /**
  * @brief funkcja obliczająca częstotliwość występowania litter w zaszyfrowanym tekście
@@ -122,6 +123,7 @@ int findKeyLength(std::wstring &inp);
  *
  * @param inpFile ścieżka do pliku wejściowego
  * @param outFile ścieżka do pliku wyjściowego
+ * @param polskie czy było szyfrowane z polskimi znakami czy bez
  */
-void cracker(const std::string &inpFile, const std::string &outFile);
+void cracker(const std::string &inpFile, const std::string &outFile, const bool &polskie);
 #endif
