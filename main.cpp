@@ -14,7 +14,7 @@ int main(int argc, char **argv)
                   << "--en szyfrowanie" << std::endl
                   << "--de odszyfrowanie" << std::endl
                   << "--br łamanie szyfru" << std::endl
-                  << "--pl załączenie obsługi polskich znaków" << std::endl
+                  << "--pl dla polskiego tekstu" << std::endl
                   << "-i plik tekstowy wejściowy" << std::endl
                   << "-o plik tekstowy wyjściowy" << std::endl
                   << "-k plik tekstowy z kluczem" << std::endl;
@@ -47,18 +47,14 @@ int main(int argc, char **argv)
         }
     }
 
-    /*
     if (crack)
     {
-        cracker(inpFile,outFile,polskie);
+        cracker(inpFile, outFile, polskie);
     }
     else
     {
-        cryptonator(inpFile,outFile,keyFile,encrypt,polskie);
+        cryptonator(inpFile, outFile, keyFile, encrypt, polskie);
     }
-    */
-
-    cryptonator(inpFile,outFile,keyFile,encrypt,polskie);
 
     return 0;
 }
