@@ -27,8 +27,9 @@ void writeToFile(const std::string &pathToFile, const std::string &fileContent);
  * @brief funkcja dopasowująca długość klucza
  * @param key zawartość pliku klucza
  * @param message zawartość pliku wejściowego
+ * @returns klucz dopasowany do wiadomosci
  */
-void adjustKey(std::wstring &key, const std::string &message);
+std::wstring adjustKey(std::wstring &key, const std::wstring &message);
 
 /**
  * @brief funcja zamieniająca na wielkie linery z uwzględnieniem znaków unicode

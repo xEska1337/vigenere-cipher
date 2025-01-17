@@ -34,7 +34,7 @@ std::string readFile(const std::string &pathToFile)
                 fileContent.reserve(size);
 
                 fileContent.assign((std::istreambuf_iterator<char>(inp)),
-                                   std::istreambuf_iterator<char>());              
+                                   std::istreambuf_iterator<char>());
             }
             toUpperCase(fileContent);
 
@@ -57,24 +57,29 @@ void writeToFile(const std::string &pathToFile, const std::string &fileContent)
     }
 }
 
-void adjustKey(std::wstring &key, const std::string &message)
+std::wstring adjustKey(std::wstring &key, const std::wstring &message)
 {
-    for (int i = key.length(), j = 0; i <= message.length(); i++, j++)
+    std::wstring keyOut;
+    int j = 0;
+    for (int i = 0; i <= message.length(); i++)
     {
-        if (key.length() >= message.length())
+        if (keyOut.length() >= message.length())
         {
-            return;
+            return keyOut;
+        }
+
+        if (iswalpha(message[i]))
+        {
+            keyOut.push_back(key[j]);
+            j = (j + 1) % key.length();
         }
         else
         {
-            if (j == key.length())
-            {
-                j = 0;
-            }
-
-            key.push_back(key[j]);
+            keyOut.push_back(message[i]);
         }
     }
+
+    return keyOut;
 }
 
 void toUpperCase(std::string &inp)
@@ -116,7 +121,8 @@ void characterReplacer(std::wstring &inp)
 void cryptonator(const std::string &inpFile, const std::string &outFile, const std::string &keyFile, const bool &encrypt, const bool &polskie)
 {
     std::wstring message = toWStringConverter(readFile(inpFile)),
-                 key = toWStringConverter(readFile(keyFile)),
+                 keyToProcess = toWStringConverter(readFile(keyFile)),
+                 key,
                  processedMessage,
                  alphabet;
 
@@ -130,9 +136,9 @@ void cryptonator(const std::string &inpFile, const std::string &outFile, const s
         characterReplacer(message);
     }
 
-    deleteSpecialCharacters(message);
+    // deleteSpecialCharacters(message);
     deleteSpecialCharacters(key);
-    adjustKey(key, fromWStringConverter(message));
+    key = adjustKey(keyToProcess, message);
 
     int index = 0;
     for (int i = 0; i < message.length(); i++)
@@ -140,15 +146,22 @@ void cryptonator(const std::string &inpFile, const std::string &outFile, const s
         auto m = find(alphabet.begin(), alphabet.end(), message[i]);
         auto k = find(alphabet.begin(), alphabet.end(), key[i]);
 
-        if (encrypt)
+        if (m != alphabet.end())
         {
-            index = (distance(alphabet.begin(), m) + distance(alphabet.begin(), k)) % alphabet.length();
+            if (encrypt)
+            {
+                index = (distance(alphabet.begin(), m) + distance(alphabet.begin(), k)) % alphabet.length();
+            }
+            else
+            {
+                index = (distance(alphabet.begin(), m) - distance(alphabet.begin(), k) + alphabet.length()) % alphabet.length();
+            }
+            processedMessage.push_back(alphabet[index]);
         }
         else
         {
-            index = (distance(alphabet.begin(), m) - distance(alphabet.begin(), k) + alphabet.length()) % alphabet.length();
+            processedMessage.push_back(message[i]);
         }
-        processedMessage.push_back(alphabet[index]);
     }
 
     writeToFile(outFile, fromWStringConverter(processedMessage));
