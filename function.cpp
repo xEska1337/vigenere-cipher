@@ -24,16 +24,17 @@ std::string readFile(const std::string &pathToFile)
         }
         else
         {
-            std::ifstream inp(pathToFile);
+            std::ifstream inp(pathToFile, std::ios_base::binary);
             if (inp)
             {
-                while (not inp.eof())
-                {
-                    std::string temp;
-                    inp >> temp;
+                inp.seekg(0, std::ios_base::end);
+                int size = inp.tellg();
+                inp.seekg(0, std::ios_base::beg);
 
-                    fileContent.append(temp);
-                }
+                fileContent.reserve(size);
+
+                fileContent.assign((std::istreambuf_iterator<char>(inp)),
+                                   std::istreambuf_iterator<char>());              
             }
             toUpperCase(fileContent);
 
