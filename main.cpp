@@ -2,7 +2,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "function.h"
+#include "encodeDecode.h"
+#include "crackCipher.h"
 
 int main(int argc, char **argv)
 {
